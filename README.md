@@ -209,5 +209,3 @@ par/
 ## 📜 License
 
 MIT License © 2025 Prateek Verma
-ant me to also include a **`docker-compose.yml`** so you can start both the backend + database + frontend in one command (`docker compose up`)?
-```
