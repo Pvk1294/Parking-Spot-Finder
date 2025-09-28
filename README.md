@@ -1,8 +1,3 @@
-Here’s a full **README.md** you can drop directly into your repo. It explains everything clearly for anyone running or reviewing your project 👇
-
----
-
-````markdown
 # 🅿️ Python Parking API
 
 A simple parking spot management system built with **FastAPI**, **PostgreSQL (Docker)**, and a lightweight **HTML+JS frontend**.  
@@ -213,11 +208,6 @@ par/
 
 ## 📜 License
 
-MIT License © 2025 Your Name
-
-```
-
----
-
-👉 Do you want me to also include a **`docker-compose.yml`** so you can start both the backend + database + frontend in one command (`docker compose up`)?
+MIT License © 2025 Prateek Verma
+ant me to also include a **`docker-compose.yml`** so you can start both the backend + database + frontend in one command (`docker compose up`)?
 ```
