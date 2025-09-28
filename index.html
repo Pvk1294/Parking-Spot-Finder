@@ -1,0 +1,278 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Python Parking API – Simple Frontend</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--ink:#e5e7eb;--muted:#94a3b8;--accent:#22c55e;--danger:#ef4444;--border:#1f2937}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Inter,Arial;background:linear-gradient(180deg,#0b1220,#0f172a);color:var(--ink)}
+    header{position:sticky;top:0;background:#0b1220dd;backdrop-filter:saturate(140%) blur(6px);border-bottom:1px solid var(--border);z-index:10}
+    .wrap{max-width:1100px;margin:0 auto;padding:18px 20px}
+    h1{margin:0;font-size:20px;letter-spacing:.4px}
+    .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:16px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+    .card h2{margin:0 0 10px;font-size:16px}
+    label{display:block;margin:.35rem 0 .2rem;color:var(--muted);font-size:12px}
+    input,select,button,textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;background:#0b1220;color:var(--ink);outline:none}
+    input:focus,textarea:focus{border-color:#334155}
+    button{cursor:pointer;background:#0b1220;border-color:#334155}
+    .btn{display:inline-flex;align-items:center;gap:6px;border-radius:10px;border:1px solid #334155;padding:10px 12px}
+    .btn.primary{background:var(--accent);border-color:var(--accent);color:#052e16;font-weight:600}
+    .btn.danger{background:transparent;border-color:#475569;color:#fca5a5}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    .log{min-height:140px;background:#0b1220;border:1px dashed #2a364a;border-radius:10px;padding:12px;white-space:pre-wrap;font-family:ui-monospace,Consolas,monospace;font-size:12px;overflow:auto}
+    .list{display:grid;gap:8px}
+    .pill{display:inline-flex;padding:4px 8px;border:1px solid #334155;border-radius:999px;font-size:11px;color:#a5b4fc}
+    .muted{color:var(--muted);font-size:12px}
+    .flex{display:flex;gap:10px;align-items:center}
+    .mt{margin-top:10px}
+    .sm{font-size:12px}
+    .success{color:#86efac}
+    .error{color:#fca5a5}
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap flex" style="justify-content:space-between">
+      <h1>Python Parking API – Demo UI</h1>
+      <div class="flex" style="gap:8px">
+        <label class="muted sm" for="baseUrl">Base URL</label>
+        <input id="baseUrl" style="width:320px" value="http://127.0.0.1:8000" />
+        <button class="btn" id="btnPing">Ping</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap" style="padding-top:18px">
+    <div class="grid">
+      <section class="card">
+        <h2>Lots</h2>
+        <div class="row">
+          <div>
+            <label>Name</label>
+            <input id="lotName" placeholder="Mall Basement" />
+          </div>
+          <div class="row">
+            <div>
+              <label>Latitude</label>
+              <input id="lotLat" type="number" step="any" value="28.6139" />
+            </div>
+            <div>
+              <label>Longitude</label>
+              <input id="lotLng" type="number" step="any" value="77.2090" />
+            </div>
+          </div>
+        </div>
+        <div class="flex mt">
+          <button class="btn primary" id="btnCreateLot">Create Lot</button>
+          <button class="btn" id="btnListLots">List Lots</button>
+        </div>
+        <div class="mt list" id="lotsList"></div>
+      </section>
+
+      <section class="card">
+        <h2>Spots</h2>
+        <div class="row">
+          <div>
+            <label>Lot ID</label>
+            <input id="spotLotId" type="number" placeholder="1" />
+          </div>
+          <div>
+            <label>Spot Number</label>
+            <input id="spotNumber" placeholder="B1-042" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Type</label>
+            <select id="spotType">
+              <option value="car">car</option>
+              <option value="bike">bike</option>
+              <option value="ev">ev</option>
+            </select>
+          </div>
+          <div class="muted" style="align-self:end">Unique per lot</div>
+        </div>
+        <div class="flex mt">
+          <button class="btn primary" id="btnCreateSpot">Create Spot</button>
+          <button class="btn" id="btnListSpots">List Spots</button>
+        </div>
+        <div class="mt list" id="spotsList"></div>
+      </section>
+
+      <section class="card">
+        <h2>Search Nearby (Available)</h2>
+        <div class="row">
+          <div>
+            <label>Latitude</label>
+            <input id="searchLat" type="number" step="any" value="28.6129" />
+          </div>
+          <div>
+            <label>Longitude</label>
+            <input id="searchLng" type="number" step="any" value="77.2295" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Radius (m)</label>
+            <input id="searchRadius" type="number" value="1500" />
+          </div>
+          <div>
+            <label>Limit</label>
+            <input id="searchLimit" type="number" value="10" />
+          </div>
+        </div>
+        <div class="flex mt">
+          <button class="btn primary" id="btnSearch">Search</button>
+        </div>
+        <div class="mt list" id="searchResults"></div>
+      </section>
+
+      <section class="card">
+        <h2>Reservations</h2>
+        <div class="row">
+          <div>
+            <label>Spot ID</label>
+            <input id="resSpotId" type="number" placeholder="1" />
+          </div>
+          <div>
+            <label>Vehicle Plate</label>
+            <input id="resPlate" placeholder="DL8CAF1234" />
+          </div>
+        </div>
+        <div class="row">
+          <div>
+            <label>Start (ISO)</label>
+            <input id="resStart" placeholder="2025-09-29T12:00:00Z" />
+          </div>
+          <div>
+            <label>End (ISO)</label>
+            <input id="resEnd" placeholder="2025-09-29T14:00:00Z" />
+          </div>
+        </div>
+        <div class="flex mt">
+          <button class="btn primary" id="btnReserve">Create Reservation</button>
+          <input id="resId" placeholder="Reservation ID to end" style="max-width:200px" />
+          <button class="btn danger" id="btnEnd">End Reservation</button>
+        </div>
+        <div class="mt log" id="log"></div>
+      </section>
+    </div>
+  </main>
+
+  <script>
+    const $ = (id)=>document.getElementById(id);
+    const log = (msg, type="info")=>{
+      const el = $("log");
+      const stamp = new Date().toLocaleTimeString();
+      el.innerHTML = `[${stamp}] ${msg}\n` + el.innerHTML;
+    }
+    const api = async (path, opts={})=>{
+      const base = $("baseUrl").value.replace(/\/?$/,'');
+      const url = base + path;
+      const res = await fetch(url, opts);
+      let body;
+      const text = await res.text();
+      try{ body = text ? JSON.parse(text) : null; }catch{ body = text }
+      return { ok: res.ok, status: res.status, body };
+    }
+
+    // Ping
+    $("btnPing").onclick = async ()=>{
+      const r = await api('/health');
+      log(`GET /health → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+    };
+
+    // Lots
+    const renderLots = (rows)=>{
+      const el = $("lotsList");
+      if(!rows || !rows.length){ el.innerHTML = '<div class="muted">No lots yet</div>'; return; }
+      el.innerHTML = rows.map(l=>`<div class="card" style="padding:10px"><div><strong>#${l.id}</strong> — ${l.name}</div><div class="muted sm">${l.latitude}, ${l.longitude}</div></div>`).join('');
+    };
+
+    $("btnCreateLot").onclick = async ()=>{
+      const payload = {
+        name: $("lotName").value || 'Mall Basement',
+        latitude: parseFloat($("lotLat").value),
+        longitude: parseFloat($("lotLng").value)
+      };
+      const r = await api('/lots', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      log(`POST /lots → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+      if(r.ok) $("btnListLots").click();
+    };
+
+    $("btnListLots").onclick = async ()=>{
+      const r = await api('/lots');
+      if(r.ok) renderLots(r.body); else log(`GET /lots → ${r.status} ${JSON.stringify(r.body)}`, 'error');
+    }
+
+    // Spots
+    const renderSpots = (rows)=>{
+      const el = $("spotsList");
+      if(!rows || !rows.length){ el.innerHTML = '<div class="muted">No spots yet</div>'; return; }
+      el.innerHTML = rows.map(s=>`<div class="card" style="padding:10px"><div><strong>#${s.id}</strong> — ${s.number} <span class="pill">${s.type}</span></div><div class="muted sm">lot: ${s.lot_id} • available: ${s.is_available}</div></div>`).join('');
+    };
+
+    $("btnCreateSpot").onclick = async ()=>{
+      const lotId = parseInt($("spotLotId").value || '1');
+      const payload = { number: $("spotNumber").value || 'B1-042', type: $("spotType").value };
+      const r = await api(`/lots/${lotId}/spots`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      log(`POST /lots/${lotId}/spots → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+      if(r.ok) $("btnListSpots").click();
+    };
+
+    $("btnListSpots").onclick = async ()=>{
+      const r = await api('/spots?only_available=false');
+      if(r.ok) renderSpots(r.body); else log(`GET /spots → ${r.status} ${JSON.stringify(r.body)}`, 'error');
+    }
+
+    // Search
+    $("btnSearch").onclick = async ()=>{
+      const q = new URLSearchParams({
+        lat: $("searchLat").value,
+        lng: $("searchLng").value,
+        radius_m: $("searchRadius").value,
+        limit: $("searchLimit").value
+      }).toString();
+      const r = await api('/spots/search?'+q);
+      const el = $("searchResults");
+      if(r.ok && r.body.length){
+        el.innerHTML = r.body.map(x=>`<div class="card" style="padding:10px"><div><strong>Spot #${x.id}</strong> in lot ${x.lot_id}</div><div class="muted sm">${x.number} (${x.type}) • ${x.distance_m} m away • available: ${x.is_available}</div></div>`).join('');
+      } else {
+        el.innerHTML = '<div class="muted">No results</div>';
+      }
+      log(`GET /spots/search → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+    }
+
+    // Reservations
+    $("btnReserve").onclick = async ()=>{
+      const payload = {
+        spot_id: parseInt($("resSpotId").value || '1'),
+        vehicle_plate: $("resPlate").value || 'DL8CAF1234',
+        start_time: $("resStart").value || new Date(Date.now()+5*60*1000).toISOString(),
+        end_time: $("resEnd").value || new Date(Date.now()+2*60*60*1000).toISOString()
+      };
+      const r = await api('/reservations', {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify(payload)});
+      log(`POST /reservations → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+      if(r.ok){ $("resId").value = r.body.id; }
+    };
+
+    $("btnEnd").onclick = async ()=>{
+      const id = ($("resId").value || '').trim();
+      if(!id){ log('Please enter reservation ID to end','error'); return; }
+      const r = await api(`/reservations/${id}/end`, {method:'POST'});
+      log(`POST /reservations/${id}/end → ${r.status} ${JSON.stringify(r.body)}`, r.ok?'success':'error');
+    };
+
+    // Auto-fill ISO times on load for convenience
+    window.addEventListener('load', ()=>{
+      const now = new Date();
+      const start = new Date(now.getTime()+5*60*1000).toISOString();
+      const end = new Date(now.getTime()+2*60*60*1000).toISOString();
+      $("resStart").value = start; $("resEnd").value = end;
+    });
+  </script>
+</body>
+</html>
